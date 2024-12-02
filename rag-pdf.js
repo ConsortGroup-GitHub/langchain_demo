@@ -1,6 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { CommaSeparatedListOutputParser } from "@langchain/core/output_parsers";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
@@ -24,7 +24,7 @@ const prompt = ChatPromptTemplate.fromTemplate(`
 `);
 
 // Create Parser
-const parser = new CommaSeparatedListOutputParser();
+const parser = new StringOutputParser();
 
 // Create Chain
 const chain = await createStuffDocumentsChain({
