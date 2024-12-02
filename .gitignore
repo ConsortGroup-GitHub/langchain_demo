@@ -1,4 +1,3 @@
 # Ignorer les fichiers contenant des secrets
 secrets.json
 .env
-node_modules/
