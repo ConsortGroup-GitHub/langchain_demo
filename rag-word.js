@@ -2,7 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
@@ -10,10 +10,12 @@ import { createRetrievalChain } from "langchain/chains/retrieval";
 import * as dotenv from "dotenv";
 dotenv.config();
 
+// Nécessite 'npm install mammoth'
+
 // Create model
 const model = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
-    temperature: 0.1
+    temperature: 0.7
 });
 
 // Create Prompt Template avec fromTemplate
@@ -33,11 +35,11 @@ const chain = await createStuffDocumentsChain({
     parser,
 });
 
-// Load PDF Document using PDFLoader
-const loader = new PDFLoader("data/example.pdf");
+// Load Word Document using DocxLoader
+const loader = new DocxLoader("data/example.docx");
 const docs = await loader.load();
 
-// 1- Split PDF documents into multiple chunks (to avoid exceeding context size limits)
+// 1- Split Word document into multiple chunks (to avoid exceeding context size limits)
 const splitter = new RecursiveCharacterTextSplitter({
     chunkSize: 200,
     chunkOverlap: 20
@@ -64,7 +66,7 @@ const retrievalChain = await createRetrievalChain({
 });
 
 const response = await retrievalChain.invoke({
-    input: "Quels sont les interlocuteurs Decathlon (avec leurs adresses mail) pour cet appel d'offres ?"
+    input: "Chez quels clients Lies a t'il travaillé précédemment ?"
 });
 
 console.log(response);
