@@ -19,6 +19,7 @@
     "langchain": "^0.3.6",
     "langchain-js-tutorial": "file:",
     "mammoth": "^1.8.0",
+    "officeparser": "^4.2.0",
     "pdf-parse": "^1.1.1",
     "zod": "^3.23.8"
   }
