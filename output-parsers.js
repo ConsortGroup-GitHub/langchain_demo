@@ -55,7 +55,7 @@ async function callListOutputParser(){
 
     // Call Chain
     return await chain.invoke({
-        word: "hippopotame"
+        word: "joie"
     });
 }
 
@@ -108,7 +108,7 @@ async function callZodOutputParser(){
 
     // Call Chain
     return await chain.invoke({
-        //phrase: "Les ingrédients pour des spaghetti Bolognèse sont de la crème, des spaghettis, du vin, des lardons, des tomates, des oeufs et du gruyère. Sans oublier du sel et du poivre.",
+        //phrase: "Les ingrédients pour des spaghetti Bolognaise sont de la crème, des spaghettis, des lardons, des tomates, du vin, des oeufs et du gruyère. Sans oublier du sel et du poivre.",
         phrase: "Les ingrédients pour une salade légère sont une laitue, des carottes, une betterave rouge et des graines de courge.",
         format_instructions: parser.getFormatInstructions()
     });
@@ -116,7 +116,7 @@ async function callZodOutputParser(){
 
 //const response = await callStringOutputParser();
 //const response = await callListOutputParser();
-const response = await callStructuredParser();
-// const response = await callZodOutputParser();
+//const response = await callStructuredParser();
+const response = await callZodOutputParser();
 
 console.log(response);

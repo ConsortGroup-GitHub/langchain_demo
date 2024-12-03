@@ -68,7 +68,7 @@ const vectorstores = await MemoryVectorStore.fromDocuments(
 
 //4- Retrieve Data
 const retriever = vectorstores.asRetriever({
-    k: 20
+    k: 5
 });
 
 const retrievalChain = await createRetrievalChain({
