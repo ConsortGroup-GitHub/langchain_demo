@@ -14,6 +14,7 @@
     "@langchain/community": "^0.3.16",
     "@langchain/openai": "^0.3.14",
     "cheerio": "^1.0.0",
+    "d3-dsv": "^2.0.0",
     "dotenv": "^16.4.5",
     "langchain": "^0.3.6",
     "langchain-js-tutorial": "file:",
