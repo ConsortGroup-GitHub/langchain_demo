@@ -1,6 +1,7 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser, CommaSeparatedListOutputParser, StructuredOutputParser } from '@langchain/core/output_parsers';
+// import { traceable } from 'langsmith/traceable';
 import * as z from 'zod';
 
 import * as dotenv from 'dotenv';
@@ -9,7 +10,8 @@ dotenv.config();
 // Create model
 const model = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
-    temperature: 0.7
+    temperature: 0.4,
+    topP: 1
 })
 
 // Utilisation de StringOutputParser pour avoir un résultat sous forme de string :
@@ -29,8 +31,6 @@ async function callStringOutputParser(){
     // Create Parser
     const parser = new StringOutputParser();
 
-    // console.log(await prompt.format({input: "poulet"}));
-
     // Create Chain
     const chain = prompt.pipe(model).pipe(parser);
 
@@ -38,6 +38,14 @@ async function callStringOutputParser(){
     return await chain.invoke({
         input: "bisounours"
     });
+
+    // Création de la chaîne avant traçage
+    // let chain = prompt.pipe(model).pipe(parser);
+    // Ajout du traçage
+    // chain = traceable(chain, { name: "StringOutputChain", runType: "chain" });
+ 
+    // return await chain.invoke({ input: "bisounours" });
+
 }
 
 // Utilisation de CommaSeparatedListOutputParser pour avoir un résultat sous forme d'array :
@@ -57,6 +65,11 @@ async function callListOutputParser(){
     return await chain.invoke({
         word: "joie"
     });
+
+    // let chain = prompt.pipe(model).pipe(parser);
+    // chain = traceable(chain, { name: "ListOutputChain", runType: "chain" });
+
+    // return await chain.invoke({ word: "joie" });
 }
 
 // Utilisation de Structured Output Parser pour avoir un résultat sous forme de Json :
@@ -82,6 +95,14 @@ async function callStructuredParser(){
         phrase: "Cela fait longtemps que Greg voulait se rendre aux US. Maintenant qu'il en est à 32 printemps, c'est chose faite !",
         format_instructions: parser.getFormatInstructions()
     });
+
+    // let chain = prompt.pipe(model).pipe(parser);
+    // chain = traceable(chain, { name: "StructuredOutputChain", runType: "chain" });
+
+    // return await chain.invoke({
+    //     phrase: "Cela fait longtemps que Greg voulait se rendre aux US. Maintenant qu'il en est à 32 printemps, c'est chose faite !",
+    //     format_instructions: parser.getFormatInstructions()
+    // });
 }
 
 // Utilisation de ZOD Output Parser pour avoir un résultat sous forme de Json, plus complexe (nécessite 'npm install zod') :
@@ -106,10 +127,13 @@ async function callZodOutputParser(){
     // Create Chain
     const chain = prompt.pipe(model).pipe(parser);
 
+    // let chain = prompt.pipe(model).pipe(parser);
+    // chain = traceable(chain, { name: "ZodOutputChain", runType: "chain" });
+
     // Call Chain
     return await chain.invoke({
-        //phrase: "Les ingrédients pour des spaghetti Bolognaise sont de la crème, des spaghettis, des lardons, des tomates, du vin, des oeufs et du gruyère. Sans oublier du sel et du poivre.",
-        phrase: "Les ingrédients pour une salade légère sont une laitue, des carottes, une betterave rouge et des graines de courge.",
+        phrase: "Les ingrédients pour des spaghetti Bolognaise sont de la crème, des spaghettis, des lardons, des tomates, des oeufs et du gruyère. Sans oublier du sel et du poivre.",
+        //phrase: "Les ingrédients pour une salade légère sont une laitue, des carottes, une betterave rouge, du rhum et des graines de courge.",
         format_instructions: parser.getFormatInstructions()
     });
 }

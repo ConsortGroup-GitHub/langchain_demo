@@ -29,7 +29,7 @@ const chain = prompt.pipe(model);
 
 // Call Chain
 const response = await chain.invoke({
-    input: "chat"
+    input: "banane"
 });
 
 console.log(response);
