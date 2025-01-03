@@ -2,6 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { createOpenAIFunctionsAgent, AgentExecutor } from 'langchain/agents';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
 
 import readline from 'readline';
 
@@ -18,6 +19,7 @@ const model = new ChatOpenAI({
 // Create Prompt Template avec fromMessages :
 const prompt = ChatPromptTemplate.fromMessages([
     ["system", "Tu es un assistant très aidant qui s'appelle Max."],
+    new MessagesPlaceholder("chat_history"),
     ["human", "{input}"],
     new MessagesPlaceholder("agent_scratchpad"),    
 ]);
@@ -45,6 +47,7 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
+const chat_history = [];
 
 const askQuestion = () => {
     rl.question("User: ", async (input) => {
@@ -57,9 +60,12 @@ const askQuestion = () => {
         // Call Agent
         const response = await agentExecutor.invoke({
             input: input,
+            chat_history: chat_history,
         });
     
         console.log("Agent : ", response.output);
+        chat_history.push(new HumanMessage(input));
+        chat_history.push(new AIMessage(response.output));
 
         askQuestion();
     });
