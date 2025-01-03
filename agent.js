@@ -3,6 +3,8 @@ import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts
 import { createOpenAIFunctionsAgent, AgentExecutor } from 'langchain/agents';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 
+import readline from 'readline';
+
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -37,9 +39,30 @@ const agentExecutor = new AgentExecutor({
     tools,
 });
 
-// Call Agent
-const response = await agentExecutor.invoke({
-    input: "Quel temps fait t'il actuellement à Lille, en France ?",
+// Get User Input
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
 });
 
-console.log(response);
+
+const askQuestion = () => {
+    rl.question("User: ", async (input) => {
+
+        if(input.toLowerCase() === 'exit'){
+            rl.close();
+            return;
+        };
+
+        // Call Agent
+        const response = await agentExecutor.invoke({
+            input: input,
+        });
+    
+        console.log("Agent : ", response.output);
+
+        askQuestion();
+    });
+};
+
+askQuestion();
