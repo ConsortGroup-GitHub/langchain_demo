@@ -10,11 +10,13 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { createRetrievalChain } from 'langchain/chains/retrieval';
 
+import { MessagesPlaceholder } from '@langchain/core/prompts';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import { createHistoryAwareRetriever } from 'langchain/chains/history_aware_retriever';
 
 
 import * as dotenv from 'dotenv';
-import { ConversationChain } from "langchain/chains";
+// import { ConversationChain } from "langchain/chains";
 dotenv.config();
 
 
@@ -53,12 +55,20 @@ const createChain = async () => {
     });
 
     // Create Prompt Template avec fromTemplate :
-    const prompt = ChatPromptTemplate.fromTemplate(`
-        Réponds à la question de l'utilisateur stp.
-        Context: {context}
-        Chat History: {chat_history}
-        Question: {input}
-    `);
+    // const prompt = ChatPromptTemplate.fromTemplate(`
+    //     Réponds à la question de l'utilisateur stp.
+    //     Context: {context}
+    //     Chat History: {chat_history}
+    //     Question: {input}
+    // `);
+
+    // Create Prompt Template avec fromMessages :
+    const prompt = ChatPromptTemplate.fromMessages([
+        ["system", "Réponds à la question de l'utilisateur stp, en te basant sur le contexte suivante : {context}."],
+        new MessagesPlaceholder("chat_history"),
+        ["user", "{input}"],
+    ]);
+
 
     // Create Parser
     const parser = new CommaSeparatedListOutputParser();
@@ -75,9 +85,21 @@ const createChain = async () => {
         k: 5
     });
 
+    const retrieverPrompt = ChatPromptTemplate.fromMessages([
+        new MessagesPlaceholder("chat_history"),
+        ["user", "{input}"],
+        ["user", "Sur la base de la conversation précédente, génère une requête de recherche pour avoir l'information la plus adéquate pour la conversation"]
+    ]);
+
+    const history_aware_retriever = await createHistoryAwareRetriever({
+        llm: model,
+        retriever,
+        rephrasePrompt: retrieverPrompt,
+    });
+
     const conversationChain = await createRetrievalChain({
         combineDocsChain: chain,
-        retriever,
+        retriever: history_aware_retriever,
     });
 
     return conversationChain;
@@ -94,11 +116,11 @@ const chatHistory = [
     new AIMessage("Bonjour David, comment puis-je t'aider aujourd'hui ?"),
     new HumanMessage("Cite STP les différents web loaders en JS pouvant être utilisés avec Langchain, en les séparant par des virgules."),
     new AIMessage("Les différents web loaders en JS pouvant être utilisés avec Langchain sont Playwright, AirtableLoader, PDFLoader, TextLoader.")
-]
+];
 
 
 const response = await chain.invoke({
-    input: "Tu peux me rappeler comment je m'appelle, stp ?",
+    input: "Tu peux me rappeler les différents Web Loaders, stp ?",
     chat_history: chatHistory
 });
 

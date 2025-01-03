@@ -67,7 +67,7 @@ const retrievalChain = await createRetrievalChain({
 });
 
 const response = await retrievalChain.invoke({
-    input: "Quel est le pourcentage de certifiés ISTQB Fondation stp ?"
+    input: "Quel est le pourcentage de certifiés ISTQB Fondation stp ? Et peux-ty me rappeler de quelle année on parle ?"
 });
 
 console.log(response);
