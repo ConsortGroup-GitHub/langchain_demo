@@ -2,13 +2,13 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { CommaSeparatedListOutputParser } from '@langchain/core/output_parsers';
 import { createStuffDocumentsChain } from 'langchain/chains/combine_documents';
-// import { Document } from '@langchain/core/documents';
-import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio';
+import { createRetrievalChain } from 'langchain/chains/retrieval';
 
+import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
-import { createRetrievalChain } from 'langchain/chains/retrieval';
+
 
 
 import * as dotenv from 'dotenv';
